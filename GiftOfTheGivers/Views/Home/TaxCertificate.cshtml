@@ -1,0 +1,105 @@
+﻿@model GiftOfTheGivers.Models.Donation
+
+@{
+    ViewData["Title"] = "Tax Certificate";
+}
+
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-8">
+
+            <div class="card shadow border-0">
+
+                <div class="card-body p-5">
+
+                    <div class="text-center mb-4">
+
+                        <h1 class="fw-bold">
+                            Gift of the Givers
+                        </h1>
+
+                        <h3>
+                            Donation Tax Certificate
+                        </h3>
+
+                        <p class="text-muted">
+                            Disaster Relief System
+                        </p>
+
+                        <hr />
+
+                    </div>
+
+                    <div class="alert alert-success text-center">
+                        Donation successfully recorded.
+                    </div>
+
+                    <div class="mt-4">
+
+                        <p>
+                            <strong>Donation ID:</strong>
+                            @Model.DonationID
+                        </p>
+
+                        <p>
+                            <strong>Donor:</strong>
+                            @(Model.IsAnonymous
+                                                        ? "Anonymous Donor"
+                                                        : "Registered Donor")
+                        </p>
+
+                        <p>
+                            <strong>Amount:</strong>
+                            @Model.Currency
+                            @Model.Amount.ToString("N2")
+                        </p>
+
+                        <p>
+                            <strong>Donation Type:</strong>
+                            @Model.DonationType
+                        </p>
+
+                        <p>
+                            <strong>Donation Date:</strong>
+                            @Model.DonationDate.ToString("dd MMMM yyyy")
+                        </p>
+
+                    </div>
+
+                    <hr />
+
+                    <div class="text-center mt-4">
+
+                        <p class="text-muted">
+                            Thank you for supporting disaster relief
+                            and humanitarian efforts.
+                        </p>
+
+                        <button onclick="window.print()"
+                                class="btn btn-dark">
+
+                            Print / Save Certificate
+
+                        </button>
+
+                        <a asp-controller="Home"
+                           asp-action="Donate"
+                           class="btn btn-outline-secondary ms-2">
+
+                            Back to Donations
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
