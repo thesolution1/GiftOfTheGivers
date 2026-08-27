@@ -25,14 +25,14 @@ builder.Services.AddDefaultIdentity<IdentityUser>()
 
 var app = builder.Build();
 
-// === FIX: Create DB and Seed ===
+// Create DB and Seed 
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     try
     {
         var context = services.GetRequiredService<ApplicationDbContext>();
-        // This will create the DB if it doesn't exist and apply any migrations
+        
         context.Database.Migrate();
 
         var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
