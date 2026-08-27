@@ -17,6 +17,10 @@ namespace GiftOfTheGivers.Controllers
             _context = context;
         }
 
+        public IActionResult Online()
+        {
+            return View();
+        }
         public IActionResult Index()
         {
             return View();
