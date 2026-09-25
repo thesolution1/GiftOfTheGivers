@@ -1,34 +1,30 @@
 ﻿@{
-    ViewData["Title"] = "Volunteer Registration Successful";
+    ViewData["Title"] = "Volunteer Registration Success";
 }
 
-<div class="container mt-5">
+<div class="container py-5">
 
-    <div class="card shadow text-center">
+    <div class="text-center mb-4">
+        <h1 class="fw-bold">Thank you for registering</h1>
 
-        <div class="card-body p-5">
+        <p class="lead text-muted">
+            @(
+                TempData["VolunteerMessage"] ??
+                "Your registration has been received. We will be in touch soon."
+            )
+        </p>
+    </div>
 
-            <h1 class="text-success">
-                Registration Successful!
-            </h1>
+    <div class="d-flex justify-content-center gap-3">
+        <a href="/"
+           class="btn btn-dark px-4">
+            Back to Home
+        </a>
 
-            <p class="lead mt-3">
-                Thank you for registering your interest
-                as a Gift of the Givers volunteer.
-            </p>
-
-            <p>
-                Your information has been recorded and can
-                be reviewed by an employee.
-            </p>
-
-            <a href="/"
-               class="btn btn-dark mt-3">
-                Return Home
-            </a>
-
-        </div>
-
+        <a href="/Volunteer"
+           class="btn btn-outline-dark px-4">
+            Register Another Volunteer
+        </a>
     </div>
 
 </div>
