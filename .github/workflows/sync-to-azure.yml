@@ -16,8 +16,11 @@ jobs:
 
       - name: Mirror to Azure DevOps
         run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
+          # 1. Clear out any global insteadOf configurations that are breaking the URL parser
+          git config --global --unset-all url.https://.insteadof || true
           
-           
-          git push "https://x-token-auth:${{ secrets.AZURE_TOKEN }}@://azure.com" HEAD:main
+          # 2. Configure a completely fresh local remote to bypass global cache bugs
+          git remote add azure_target "https://x-token-auth:${{ secrets.AZURE_DEVOPS_TOKEN }}@://azure.com"
+          
+          # 3. Explicitly push to the newly created target
+          git push azure_target HEAD:main --force
