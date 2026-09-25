@@ -15,13 +15,26 @@ jobs:
           fetch-depth: 0 
 
       - name: Mirror to Azure DevOps
+        env:
+          # Injecting the secret as an environment variable prevents bash evaluation bugs
+          AZURE_TOKEN: ${{ secrets.AZURE_DEVOPS_TOKEN }}
         run: |
-          # 1. We construct the target URL safely by replacing raw spaces with web-safe characters (%20)
-          # using an inline string variable that Git reads all as a single token.
-          TARGET_URL="https://x-token-auth:${{ secrets.AZURE_DEVOPS_TOKEN }}@://azure.com"
+          # 1. Fallback safety check if the secret fails to load
+          if [ -z "$AZURE_TOKEN" ]; then
+            echo "ERROR: AZURE_DEVOPS_TOKEN secret is empty or missing in GitHub Settings!"
+            exit 1
+          fi
+
+          # 2. Safely structure the target organization, project, and repository names
+          ORG="ST10446802"
+          PROJECT="DISASTER RELIEF MANAGEMENT WEB APPLICATION POE"
+          REPO="GiftOfTheGivers"
           
-          # 2. We register the target directly with Git's config tree so curl doesn't parse it in the command line
-          git remote add azure_target "$TARGET_URL"
+          # 3. Use standard web-encoding to convert spaces to %20
+          ENCODED_PROJECT=$(echo "$PROJECT" | sed 's/ /%20/g')
           
-          # 3. Push using the clean remote alias to bypass the host-parsing bug completely
-          git push azure_target HEAD:main --force
+          # 4. Assemble the authenticated target URL string
+          TARGET_URL="https://x-token-auth:${AZURE_TOKEN}@://azure.com{ORG}/${ENCODED_PROJECT}/_git/${REPO}"
+          
+          # 5. Push the code cleanly
+          git push "$TARGET_URL" HEAD:main --force
