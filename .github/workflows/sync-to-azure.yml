@@ -15,9 +15,9 @@ jobs:
           fetch-depth: 0 
 
       - name: Mirror to Azure DevOps
-        # This third-party action processes URLs natively to avoid shell syntax corruption
         uses: pixta-dev/repository-mirroring-action@v1
         with:
+          # Changed 'azure.com' to the mandatory 'dev.azure.com' code server host
           target_repo_url: "https://azure.com"
           user: "x-token-auth"
           password: ${{ secrets.AZURE_DEVOPS_TOKEN }}
