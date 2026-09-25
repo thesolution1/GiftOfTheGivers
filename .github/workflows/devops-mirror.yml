@@ -1,1 +1,26 @@
+name: Mirror to Azure DevOps
+
+on:
+  push:
+    branches:
+      - master # Triggers explicitly on your active master branch
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 
+
+      - name: Force Push to Azure
+        env:
+          TOKEN: ${{ secrets.AZURE_DEVOPS_TOKEN }}
+        run: |
+          # 1. Manually build the target using the correct dev.azure.com domain
+          TARGET="https://x-token-auth:${TOKEN}@://azure.com"
+          
+          # 2. Push the master branch out cleanly
+          git push "$TARGET" master:master --force
 
