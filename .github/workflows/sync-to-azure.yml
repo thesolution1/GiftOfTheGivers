@@ -14,5 +14,6 @@ jobs:
          with:
              fetch-depth:0
         - name: mirror to azure devops
-        run:AZURE_URL="https://x-token-auth:${{ secrets.AZURE_DEVOPS_TOKEN }}@://azure.com<ORGANIZATION>/<PROJECT>/_git/<REPO_NAME>"
+        run:|
+        AZURE_URL="https://x-token-auth:${{ secrets.AZURE_DEVOPS_TOKEN }}@://azure.com<ST10446802>/<DISASTER RELIEF MANAGEMENT WEB APPLICATION POE>/_git/<GiftOfTheGivers>"
           git push $AZURE_URL main --force
