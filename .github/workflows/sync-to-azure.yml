@@ -22,7 +22,7 @@ jobs:
           
           # 2. Construct the URL (Make sure your placeholders match your Azure URL exactly)
           # Example: https://azure.com
-          AZURE_URL="https://x-token-auth:${{ secrets.AZURE_DEVOPS_TOKEN }}@://azure.com<ORGANIZATION>/<PROJECT>/_git/<REPO_NAME>"
+          AZURE_URL="https://x-token-auth:${{ secrets.AZURE_TOKEN }}@://azure.com<ST10446802>/<DISASTER RELIEF MANAGEMENT WEB APPLICATION POE>/_git/<GiftOfTheGivers>"
           
           # 3. Push normally without forcing to see if it succeeds
           git push $AZURE_URL main
