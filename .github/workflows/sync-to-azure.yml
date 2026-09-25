@@ -3,7 +3,7 @@ name: Sync to Azure Repos
 on:
   push:
     branches:
-      - main # Change this if your default branch is named master or something else
+      - master # Change this if your default branch is named master or something else
 
 jobs:
   sync:
@@ -18,7 +18,7 @@ jobs:
         run: |
           # Format the Azure URL to include authentication
           # Replace <ORGANIZATION>, <PROJECT>, and <REPO_NAME> with your actual Azure details
-          AZURE_URL="https://x-token-auth:${{ secrets.AZURE_DEVOPS_TOKEN }}@://azure.com<ORGANIZATION>/<PROJECT>/_git/<REPO_NAME>"
+          AZURE_URL="https://x-token-auth:${{ secrets.AZURE_DEVOPS_TOKEN }}@://azure.com<OST10446802>/<DISASTER RELIEF MANAGEMENT WEB APPLICATION POE>/_git/<GiftOfTheGivers>"
           
           # Force push the main branch to Azure
           git push $AZURE_URL main --force
