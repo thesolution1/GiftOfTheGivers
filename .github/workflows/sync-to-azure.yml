@@ -18,7 +18,7 @@ jobs:
         run: |
           # Format the Azure URL to include authentication
           # Replace <ORGANIZATION>, <PROJECT>, and <REPO_NAME> with your actual Azure details
-          AZURE_URL="https://x-token-auth:${{ secrets.AZURE_DEVOPS_TOKEN }}@://azure.com<OST10446802>/<DISASTER RELIEF MANAGEMENT WEB APPLICATION POE>/_git/<GiftOfTheGivers>"
+          AZURE_URL="https://x-token-auth:${{ secrets.AZURE_DEVOPS_TOKEN }}@://azure.com<ST10446802>/<DISASTER RELIEF MANAGEMENT WEB APPLICATION POE>/_git/<GiftOfTheGivers>"
           
           # Force push the main branch to Azure
           git push $AZURE_URL main --force
