@@ -3,7 +3,7 @@ name: Sync to Azure Repos
 on:
   push:
     branches:
-      - '**' # This makes the workflow run on ANY branch push, keeping everything synced
+      - '**' # Automatically syncs all branches
 
 jobs:
   sync:
@@ -15,26 +15,26 @@ jobs:
           fetch-depth: 0 
 
       - name: Mirror to Azure DevOps
+        # By defining variables here, GitHub safely parses them natively without bash conflicts
         env:
           AZURE_TOKEN: ${{ secrets.AZURE_DEVOPS_TOKEN }}
+          ORG: "ST10446802"
+          PROJECT: "DISASTER%20RELIEF%20MANAGEMENT%20WEB%20APPLICATION%20POE"
+          REPO: "GiftOfTheGivers"
         run: |
-          # 1. Safety check for the token
+          # 1. Fallback verification check
           if [ -z "$AZURE_TOKEN" ]; then
             echo "ERROR: AZURE_DEVOPS_TOKEN secret is empty in GitHub Settings!"
             exit 1
           fi
 
-          # 2. Get the exact name of the current branch being pushed (e.g., main or master)
+          # 2. Extract active branch name dynamically
           BRANCH_NAME=${GITHUB_REF#refs/heads/}
           echo "Syncing active branch: $BRANCH_NAME"
 
-          # 3. Assemble variables and encode project spaces
-          ORG="ST10446802"
-          PROJECT="DISASTER%20RELIEF%20MANAGEMENT%20WEB%20APPLICATION%20POE"
-          REPO="GiftOfTheGivers"
+          # 3. Clean local remote configuration to bypass git cache bugs
+          git remote remove azure_target || true
+          git remote add azure_target "https://x-token-auth:${AZURE_TOKEN}@://azure.com{ORG}/${PROJECT}/_git/${REPO}"
           
-          # 4. Build the target URL string
-          TARGET_URL="https://x-token-auth:${AZURE_TOKEN}@://azure.com{ORG}/${PROJECT}/_git/${REPO}"
-          
-          # 5. Push the exact matching branch directly to Azure
-          git push "$TARGET_URL" "$BRANCH_NAME:$BRANCH_NAME" --force
+          # 4. Push branch directly using the alias target
+          git push azure_target "$BRANCH_NAME:$BRANCH_NAME" --force
