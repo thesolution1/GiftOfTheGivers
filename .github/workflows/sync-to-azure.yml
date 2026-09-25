@@ -3,7 +3,7 @@ name: Sync to Azure Repos
 on:
   push:
     branches:
-      - '**' # Automatically syncs all branches
+      - '**' # Syncs any branch that gets pushed
 
 jobs:
   sync:
@@ -15,26 +15,9 @@ jobs:
           fetch-depth: 0 
 
       - name: Mirror to Azure DevOps
-        # By defining variables here, GitHub safely parses them natively without bash conflicts
-        env:
-          AZURE_TOKEN: ${{ secrets.AZURE_DEVOPS_TOKEN }}
-          ORG: "ST10446802"
-          PROJECT: "DISASTER%20RELIEF%20MANAGEMENT%20WEB%20APPLICATION%20POE"
-          REPO: "GiftOfTheGivers"
-        run: |
-          # 1. Fallback verification check
-          if [ -z "$AZURE_TOKEN" ]; then
-            echo "ERROR: AZURE_DEVOPS_TOKEN secret is empty in GitHub Settings!"
-            exit 1
-          fi
-
-          # 2. Extract active branch name dynamically
-          BRANCH_NAME=${GITHUB_REF#refs/heads/}
-          echo "Syncing active branch: $BRANCH_NAME"
-
-          # 3. Clean local remote configuration to bypass git cache bugs
-          git remote remove azure_target || true
-          git remote add azure_target "https://x-token-auth:${AZURE_TOKEN}@://azure.com{ORG}/${PROJECT}/_git/${REPO}"
-          
-          # 4. Push branch directly using the alias target
-          git push azure_target "$BRANCH_NAME:$BRANCH_NAME" --force
+        # This third-party action processes URLs natively to avoid shell syntax corruption
+        uses: pixta-dev/repository-mirroring-action@v1
+        with:
+          target_repo_url: "https://azure.com"
+          user: "x-token-auth"
+          password: ${{ secrets.AZURE_DEVOPS_TOKEN }}
