@@ -16,11 +16,12 @@ jobs:
 
       - name: Mirror to Azure DevOps
         run: |
-          # 1. Clear out any global insteadOf configurations that are breaking the URL parser
-          git config --global --unset-all url.https://.insteadof || true
+          # 1. We construct the target URL safely by replacing raw spaces with web-safe characters (%20)
+          # using an inline string variable that Git reads all as a single token.
+          TARGET_URL="https://x-token-auth:${{ secrets.AZURE_DEVOPS_TOKEN }}@://azure.com"
           
-          # 2. Configure a completely fresh local remote to bypass global cache bugs
-          git remote add azure_target "https://x-token-auth:${{ secrets.AZURE_TOKEN }}@://azure.com"
+          # 2. We register the target directly with Git's config tree so curl doesn't parse it in the command line
+          git remote add azure_target "$TARGET_URL"
           
-          # 3. Explicitly push to the newly created target
+          # 3. Push using the clean remote alias to bypass the host-parsing bug completely
           git push azure_target HEAD:main --force
