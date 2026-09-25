@@ -3,7 +3,7 @@ name: Mirror to Azure DevOps
 on:
   push:
     branches:
-      - master # Triggers explicitly on your active master branch
+      - master
 
 jobs:
   sync:
@@ -14,13 +14,16 @@ jobs:
         with:
           fetch-depth: 0 
 
-      - name: Force Push to Azure
-        env:
-          TOKEN: ${{ secrets.AZURE_DEVOPS_TOKEN }}
+      - name: Push using Clean Header Authentication
         run: |
-          # 1. Manually build the target using the correct dev.azure.com domain
-          TARGET="https://x-token-auth:${TOKEN}@://azure.com"
-          
-          # 2. Push the master branch out cleanly
-          git push "$TARGET" master:master --force
+          # 1. Base64 encode the credentials explicitly to avoid string separation issues
+          # Azure PAT tokens require a blank username, formatted as ":YOUR_PAT_TOKEN"
+          B64_AUTH=$(echo -n ":${{ secrets.AZURE_DEVOPS_TOKEN }}" | base64)
 
+          # 2. Register the direct, static repo URL as a clean target remote
+          # Notice we use NO inline variable tokens in this text string, keeping it completely safe!
+          git remote add target_azure "https://azure.com"
+
+          # 3. Inject the authorization token directly into Git's execution config tree
+          # This passes the credential under the hood, bypassing the text URL engine completely!
+          git -c http.extraHeader="Authorization: Basic $B64_AUTH" push target_azure master:master --force
