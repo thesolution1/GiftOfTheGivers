@@ -1,0 +1,17 @@
+name: sync to azure repos
+
+on:
+  push:
+     branches:
+       - master
+
+jobs:
+  sync:
+  runs-on: ubuntu-latest
+   steps:
+       - name: checkout github repository
+         uses: actions/checkout@v4
+         with:
+             fetch-depth:0
+        - name: mirror to azure devops
+        run:
