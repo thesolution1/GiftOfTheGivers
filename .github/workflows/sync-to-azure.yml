@@ -3,7 +3,7 @@ name: Sync to Azure Repos
 on:
   push:
     branches:
-      - master 
+      - '**' # This makes the workflow run on ANY branch push, keeping everything synced
 
 jobs:
   sync:
@@ -18,24 +18,23 @@ jobs:
         env:
           AZURE_TOKEN: ${{ secrets.AZURE_DEVOPS_TOKEN }}
         run: |
-          # 1. FORCE CLEAR the broken global Git url-rewriting rules that are causing the crash
-          git config --global --unset-all url.https://.insteadof || true
-          git config --global --remove-section url || true
-          
-          # 2. Check if the secret is loading correctly
+          # 1. Safety check for the token
           if [ -z "$AZURE_TOKEN" ]; then
             echo "ERROR: AZURE_DEVOPS_TOKEN secret is empty in GitHub Settings!"
             exit 1
           fi
 
-          # 3. Assemble variables and encode project spaces natively
+          # 2. Get the exact name of the current branch being pushed (e.g., main or master)
+          BRANCH_NAME=${GITHUB_REF#refs/heads/}
+          echo "Syncing active branch: $BRANCH_NAME"
+
+          # 3. Assemble variables and encode project spaces
           ORG="ST10446802"
           PROJECT="DISASTER%20RELIEF%20MANAGEMENT%20WEB%20APPLICATION%20POE"
           REPO="GiftOfTheGivers"
           
-          # 4. Build the exact URL string
+          # 4. Build the target URL string
           TARGET_URL="https://x-token-auth:${AZURE_TOKEN}@://azure.com{ORG}/${PROJECT}/_git/${REPO}"
           
-          # 5. Push using an isolated temporary remote to ignore global system configurations completely
-          git remote add temporary_azure "$TARGET_URL"
-          git push temporary_azure HEAD:
+          # 5. Push the exact matching branch directly to Azure
+          git push "$TARGET_URL" "$BRANCH_NAME:$BRANCH_NAME" --force
