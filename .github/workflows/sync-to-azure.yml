@@ -1,19 +1,24 @@
-name: sync to azure repos
+name: Sync to Azure Repos
 
 on:
   push:
-     branches:
-       - master
+    branches:
+      - main # Change this if your default branch is named master or something else
 
 jobs:
   sync:
-  runs-on: ubuntu-latest
-   steps:
-       - name: checkout github repository
-         uses: actions/checkout@v4
-         with:
-             fetch-depth:0
-        - name: mirror to azure devops
-        run:|
-        AZURE_URL="https://x-token-auth:${{ secrets.AZURE_DEVOPS_TOKEN }}@://azure.com<ST10446802>/<DISASTER RELIEF MANAGEMENT WEB APPLICATION POE>/_git/<GiftOfTheGivers>"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout GitHub Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetches all history so all commits sync properly
+
+      - name: Mirror to Azure DevOps
+        run: |
+          # Format the Azure URL to include authentication
+          # Replace <ORGANIZATION>, <PROJECT>, and <REPO_NAME> with your actual Azure details
+          AZURE_URL="https://x-token-auth:${{ secrets.AZURE_DEVOPS_TOKEN }}@://azure.com<ORGANIZATION>/<PROJECT>/_git/<REPO_NAME>"
+          
+          # Force push the main branch to Azure
           git push $AZURE_URL main --force
