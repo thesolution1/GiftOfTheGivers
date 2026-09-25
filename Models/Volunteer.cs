@@ -2,9 +2,9 @@
 
 namespace GiftOfTheGivers.Models
 {
-    public class Volunteer
+    public class Volunteer  
     {
-        public int VolunteerID { get; set; }
+        public int VolunteerID { get; set; } 
 
         [Required]
         [Display(Name = "Full Name")]
