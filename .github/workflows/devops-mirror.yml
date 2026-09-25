@@ -14,16 +14,10 @@ jobs:
         with:
           fetch-depth: 0 
 
-      - name: Push using Clean Header Authentication
-        run: |
-          # 1. Base64 encode the credentials explicitly to avoid string separation issues
-          # Azure PAT tokens require a blank username, formatted as ":YOUR_PAT_TOKEN"
-          B64_AUTH=$(echo -n ":${{ secrets.AZURE_DEVOPS_TOKEN }}" | base64)
-
-          # 2. Register the direct, static repo URL as a clean target remote
-          # Notice we use NO inline variable tokens in this text string, keeping it completely safe!
-          git remote add target_azure "https://azure.com"
-
-          # 3. Inject the authorization token directly into Git's execution config tree
-          # This passes the credential under the hood, bypassing the text URL engine completely!
-          git -c http.extraHeader="Authorization: Basic $B64_AUTH" push target_azure master:master --force
+      # Using a dedicated node action completely isolates the push from the local Git config engine
+      - name: Mirror to Azure Repos
+        uses: yesoreyeram/github-repository-mirror@v2.2.0
+        with:
+          target_repo_url: "https://azure.com"
+          target_username: "x-token-auth"
+          target_token: ${{ secrets.AZURE_DEVOPS_TOKEN }}
