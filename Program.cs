@@ -2,8 +2,22 @@ using GiftOfTheGivers;
 using GiftOfTheGivers.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Localization;
+using System.Globalization;
+
 
 var builder = WebApplication.CreateBuilder(args);
+
+
+builder.Services.AddLocalization(options =>
+{
+    options.ResourcesPath = "Resources";
+});
+
+builder.Services.AddControllersWithViews();
+
+
+
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -24,6 +38,23 @@ builder.Services.AddDefaultIdentity<IdentityUser>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 var app = builder.Build();
+
+// lauguage 
+var supportedCultures = new[]
+{
+    new CultureInfo("en"),
+    new CultureInfo("af"),
+    new CultureInfo("fr")
+};
+
+var localizationOptions = new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new RequestCulture("en"),
+    SupportedCultures = supportedCultures,
+    SupportedUICultures = supportedCultures
+};
+
+app.UseRequestLocalization(localizationOptions);
 
 // Create DB and Seed 
 using (var scope = app.Services.CreateScope())
