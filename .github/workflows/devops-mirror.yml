@@ -14,24 +14,18 @@ jobs:
         with:
           fetch-depth: 0 
 
-      # Wiping out the local git cache completely removes the sticky "azure.com" bug
-      # from the runner's memory before we establish the real link.
       - name: Clean Cache and Force Push
         env:
           TOKEN: ${{ secrets.AZURE_DEVOPS_TOKEN }}
         run: |
-          # 1. Purge the runner's local git configuration file
+          # 1. Purge the sticky configuration cache file
           rm -rf .git/config
 
-          # 2. Re-initialize a completely blank Git tracker
+          # 2. Re-initialize a pristine Git tracking profile
           git init
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
-          git add .
-          git commit -m "Temp sync tracking commit"
-
+          
           # 3. Assemble your true, correct ://azure.com path
           TARGET_URL="https://x-token-auth:${TOKEN}@://azure.com/ST10446802/DISASTER%20RELIEF%20MANAGEMENT%20WEB%20APPLICATION%20POE/_git/GiftOfTheGivers"
           
-          # 4. Push out fresh over the clean connection channel
+          # 4. Push your local files out immediately over the clean channel
           git push "$TARGET_URL" HEAD:master --force
