@@ -3,7 +3,7 @@ name: Sync to Azure Repos
 on:
   push:
     branches:
-      - master # Change this if your default branch is named master or something else
+      - master 
 
 jobs:
   sync:
@@ -12,19 +12,16 @@ jobs:
       - name: Checkout GitHub Repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Fetches all history so all commits sync properly
+          fetch-depth: 0 
 
       - name: Mirror to Azure DevOps
         run: |
-          # 1. Configure Git identity to prevent permission ghost blocks
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           
-          # 2. Construct the URL (Make sure your placeholders match your Azure URL exactly)
-          # Example: https://azure.com
-          AZURE_URL="https://x-token-auth:${{ secrets.AZURE_TOKEN }}@://azure.com<ST10446802>/<DISASTER RELIEF MANAGEMENT WEB APPLICATION POE>/_git/<GiftOfTheGivers>"
+          # Wrap the URL tightly in double quotes to prevent spaces from breaking the script
+          # Spaces are safely converted to '%20' so the URL loads correctly
+          AZURE_URL="https://x-token-auth:${{ secrets.AZURE_TOKEN }}@://azure.com"
           
-          # 3. Push normally without forcing to see if it succeeds
-          git push $AZURE_URL main
-          # Force push the main branch to Azure
-          git push $AZURE_URL main --force
+          # Push the code using the corrected URL format
+          git push "$AZURE_URL" HEAD:main
