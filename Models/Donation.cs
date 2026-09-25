@@ -8,7 +8,7 @@ namespace GiftOfTheGivers.Models
         public int DonationID { get; set; }
 
         [Required]
-        [Range(1, 100000000)]
+        [Range(1, 100000000)] 
         [Column(TypeName = "decimal(18,2)")]
         public decimal Amount { get; set; }
 
