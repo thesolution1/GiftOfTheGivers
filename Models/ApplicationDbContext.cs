@@ -17,5 +17,7 @@ namespace GiftOfTheGivers.Models
         public DbSet<Volunteer> Volunteers { get; set; }
 
         public DbSet<ReliefProject> ReliefProjects { get; set; }
+
+       
     }
 }

@@ -7,7 +7,7 @@ namespace GiftOfTheGivers
         public static async Task SeedRolesAsync(
             RoleManager<IdentityRole> roleManager)
         {
-            string[] roles = { "Employee", "Donor" };
+            string[] roles = { "Employee", "User" ,"Admin" };
 
             foreach (var role in roles)
             {
@@ -22,6 +22,7 @@ namespace GiftOfTheGivers
         public static async Task SeedEmployeeAsync(
             UserManager<IdentityUser> userManager)
         {
+            String username = "Employee12";
             string email = "employee@giftofthegivers.org";
             string password = "Employee123!";
 

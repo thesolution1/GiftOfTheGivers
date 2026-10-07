@@ -15,5 +15,8 @@ namespace GiftOfTheGivers.Models
 
         [Required]
         public string Availability { get; set; } = string.Empty;
+
+       
+
     }
 }

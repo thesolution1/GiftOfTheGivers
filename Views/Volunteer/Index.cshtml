@@ -38,13 +38,31 @@
                 </div>
 
                 <div class="mb-3">
+                    <label asp-for="ProjectName" class="form-label">
+                        Select Project To Volunter For
+                    </label>
+
+                    <select asp-for="ProjectName"
+                            class="form-select">
+
+                        <option value="">
+                            Select availability
+                        </option>
+
+                    </select>
+
+                    <span asp-validation-for="SelectProject"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
                     <label asp-for="Skills" class="form-label">
                         Skills
                     </label>
 
                     <input asp-for="Skills"
                            class="form-control"
-                           placeholder="e.g. First Aid, Driving, IT" />
+                           placeholder="e.g First Aid, Driving, IT, Rescue" />
 
                     <span asp-validation-for="Skills"
                           class="text-danger"></span>
