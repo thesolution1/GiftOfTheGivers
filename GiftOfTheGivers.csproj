@@ -11,13 +11,13 @@
     <Content Remove="data\**" />
     <EmbeddedResource Remove="data\**" />
     <None Remove="data\**" />
-  </ItemGroup>
 
-  <ItemGroup>
+    <Compile Remove="GiftOfTheGivers.Helpers\**" />
+    <Content Remove="GiftOfTheGivers.Helpers\**" />
+    <EmbeddedResource Remove="GiftOfTheGivers.Helpers\**" />
+    <None Remove="GiftOfTheGivers.Helpers\**" />
+
     <Compile Remove="Views\Donation\Index1.cshtml.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Remove="Views\Donation\Index1.cshtml" />
   </ItemGroup>
 
@@ -25,10 +25,12 @@
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />
+
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.23" />
   </ItemGroup>
 

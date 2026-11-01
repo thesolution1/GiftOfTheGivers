@@ -1,42 +1,29 @@
 ﻿using GiftOfTheGivers.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace GiftOfTheGivers.Controllers
+namespace GiftOfTheGivers.Controllers;
+
+[AllowAnonymous]
+public class VolunteerController : Controller
 {
-    public class VolunteerController : Controller
+    private readonly ApplicationDbContext _context;
+
+    public VolunteerController(ApplicationDbContext context)
     {
-        private readonly ApplicationDbContext _context;
+        _context = context;
+    }
 
-        public VolunteerController(ApplicationDbContext context)
-        {
-            _context = context;
-        }
+    [HttpGet]
+    public IActionResult Index()
+    {
+        return RedirectToAction("Create", "Contact");
+    }
 
-        public IActionResult Index()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult Submit(Volunteer volunteer)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View("Index", volunteer);
-            }
-
-            _context.Volunteers.Add(volunteer);
-            _context.SaveChanges();
-
-            TempData["VolunteerMessage"] =
-                "Thank you for registering your interest as a volunteer.";
-
-            return RedirectToAction("Success");
-        }
-
-        public IActionResult Success()
-        {
-            return View();
-        }
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult Submit()
+    {
+        return RedirectToAction("Create", "Contact");
     }
 }
