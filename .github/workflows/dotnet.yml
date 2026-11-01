@@ -1,0 +1,77 @@
+name: Build and test
+
+on:
+  push:
+    branches:
+      - Siphesihle
+      - main
+      - master
+  pull_request:
+    branches:
+      - Siphesihle
+      - main
+      - master
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore application
+        run: dotnet restore GiftOfTheGivers.csproj
+
+      - name: Build application
+        run: dotnet build GiftOfTheGivers.csproj --configuration Release --no-restore
+
+      - name: Create and reference test project
+        run: |
+          dotnet new xunit \
+            --name GiftOfTheGivers.Tests \
+            --output ./GiftOfTheGivers.Tests \
+            --framework net8.0
+
+          dotnet add ./GiftOfTheGivers.Tests/GiftOfTheGivers.Tests.csproj \
+            reference ./GiftOfTheGivers.csproj
+
+          dotnet add ./GiftOfTheGivers.Tests/GiftOfTheGivers.Tests.csproj \
+            package Microsoft.EntityFrameworkCore.InMemory \
+            --version 8.0.0
+
+          dotnet restore ./GiftOfTheGivers.Tests/GiftOfTheGivers.Tests.csproj
+
+      - name: Locate test projects
+        id: tests
+        shell: bash
+        run: |
+          TEST_PROJECTS=$(find . -name '*Tests.csproj' -o -name '*Test.csproj')
+
+          if [ -z "$TEST_PROJECTS" ]; then
+            echo "found=false" >> "$GITHUB_OUTPUT"
+            echo "No test projects were found."
+          else
+            echo "found=true" >> "$GITHUB_OUTPUT"
+            echo "$TEST_PROJECTS"
+          fi
+
+      - name: Run unit tests
+        if: steps.tests.outputs.found == 'true'
+        shell: bash
+        run: |
+          for project in $(find . -name '*Tests.csproj' -o -name '*Test.csproj'); do
+            dotnet test "$project" \
+              --configuration Release \
+              --no-restore \
+              --verbosity normal
+          done
+
+      - name: Report missing tests
+        if: steps.tests.outputs.found == 'false'
+        run: echo "::warning::No unit-test project exists yet."
