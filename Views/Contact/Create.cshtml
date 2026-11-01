@@ -1,0 +1,16 @@
+@model GiftOfTheGivers.Models.ContactRequest
+@using Microsoft.AspNetCore.Authorization
+
+[Authorize(Roles = "Employee")]
+
+<form asp-action="Create" method="post">
+    <div asp-validation-summary="ModelOnly"></div>
+
+    <label asp-for="Name"></label>
+    <input asp-for="Name" />
+
+    <label asp-for="Email"></label>
+    <input asp-for="Email" />
+
+    <button type="submit">Request Contact</button>
+</form>

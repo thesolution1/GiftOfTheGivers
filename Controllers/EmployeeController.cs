@@ -100,5 +100,58 @@ namespace GiftOfTheGivers.Controllers
 
             return RedirectToAction(nameof(Projects));
         }
+
+        // View Volunteer Requests
+        [HttpGet]
+        public async Task<IActionResult> VolunteerRequests()
+        {
+            var requests = await _context.VolunteerRequests
+                .Include(request => request.ReliefProject)
+                .OrderBy(request => request.Status)
+                .ThenByDescending(request => request.SubmittedAt)
+                .ToListAsync();
+
+            return View(requests);
+        }
+
+        // Approve Volunteer Request
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ApproveVolunteer(int id)
+        {
+            var request = await _context.VolunteerRequests
+                .FindAsync(id);
+
+            if (request is null)
+            {
+                return NotFound();
+            }
+
+            request.Status = VolunteerRequestStatus.Approved;
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(VolunteerRequests));
+        }
+
+        // Reject Volunteer Request
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RejectVolunteer(int id)
+        {
+            var request = await _context.VolunteerRequests
+                .FindAsync(id);
+
+            if (request is null)
+            {
+                return NotFound();
+            }
+
+            request.Status = VolunteerRequestStatus.Rejected;
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(VolunteerRequests));
+        }
     }
 }
