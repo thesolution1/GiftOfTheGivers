@@ -17,23 +17,23 @@ namespace GiftOfTheGivers.Controllers
 
         // Employee Dashboard
         public async Task<IActionResult> Dashboard()
-{
-    ViewBag.TotalVolunteers =
-        await _context.Volunteers.CountAsync();
+        {
+            ViewBag.TotalVolunteers =
+                await _context.Volunteers.CountAsync();
 
-    ViewBag.TotalReliefProjects =
-        await _context.ReliefProjects.CountAsync();
+            ViewBag.TotalReliefProjects =
+                await _context.ReliefProjects.CountAsync();
 
-    ViewBag.TotalDonations =
-        await _context.Donations.CountAsync();
+            ViewBag.TotalDonations =
+                await _context.Donations.CountAsync();
 
-    ViewBag.TotalZarDonations =
-        await _context.Donations
-            .Where(d => d.Currency == "ZAR")
-            .SumAsync(d => d.Amount);
+            ViewBag.TotalZarDonations =
+                await _context.Donations
+                    .Where(d => d.Currency == "ZAR")
+                    .SumAsync(d => d.Amount);
 
-    return View();
-}
+            return View();
+        }
         // View Volunteers
         public async Task<IActionResult> Volunteers()
         {

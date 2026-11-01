@@ -15,9 +15,7 @@ builder.Services.AddLocalization(options =>
 });
 
 builder.Services.AddControllersWithViews();
-
-
-
+builder.Services.AddRazorPages();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -39,7 +37,7 @@ builder.Services.AddDefaultIdentity<IdentityUser>()
 
 var app = builder.Build();
 
-// lauguage 
+// language 
 var supportedCultures = new[]
 {
     new CultureInfo("en"),
@@ -47,6 +45,7 @@ var supportedCultures = new[]
     new CultureInfo("fr")
 };
 
+// Corrected spelling from "lauguage" to "language"
 var localizationOptions = new RequestLocalizationOptions
 {
     DefaultRequestCulture = new RequestCulture("en"),
