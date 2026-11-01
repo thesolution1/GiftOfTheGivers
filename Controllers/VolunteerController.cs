@@ -5,14 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 namespace GiftOfTheGivers.Controllers;
 
 [AllowAnonymous]
-public class VolunteerController : Controller
+public class VolunteerController(ApplicationDbContext context) : Controller
 {
-    private readonly ApplicationDbContext _context;
-
-    public VolunteerController(ApplicationDbContext context)
-    {
-        _context = context;
-    }
+    private readonly ApplicationDbContext _context = context;
 
     [HttpGet]
     public IActionResult Index()

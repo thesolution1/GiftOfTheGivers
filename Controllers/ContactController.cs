@@ -5,14 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 namespace GiftOfTheGivers.Controllers;
 
 [AllowAnonymous]
-public class ContactController : Controller
+public class ContactController(ApplicationDbContext context) : Controller
 {
-    private readonly ApplicationDbContext _context;
-
-    public ContactController(ApplicationDbContext context)
-    {
-        _context = context;
-    }
+    private readonly ApplicationDbContext _context = context;
 
     [HttpGet]
     public IActionResult Create()

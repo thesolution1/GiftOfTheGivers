@@ -8,18 +8,13 @@ using Microsoft.EntityFrameworkCore;
 namespace GiftOfTheGivers.Controllers;
 
 [Authorize]
-public class DonorController : Controller
+public class DonorController(
+    ApplicationDbContext context,
+    UserManager<IdentityUser> userManager)
+    : Controller
 {
-    private readonly ApplicationDbContext _context;
-    private readonly UserManager<IdentityUser> _userManager;
-
-    public DonorController(
-        ApplicationDbContext context,
-        UserManager<IdentityUser> userManager)
-    {
-        _context = context;
-        _userManager = userManager;
-    }
+    private readonly ApplicationDbContext _context = context;
+    private readonly UserManager<IdentityUser> _userManager = userManager;
 
     [HttpGet]
     public async Task<IActionResult> Projects()
