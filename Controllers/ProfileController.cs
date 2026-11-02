@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using GiftOfTheGivers.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace GiftOfTheGivers.Controllers
 {
@@ -8,10 +10,14 @@ namespace GiftOfTheGivers.Controllers
     public class ProfileController : Controller
     {
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly ApplicationDbContext _context;
 
-        public ProfileController(UserManager<IdentityUser> userManager)
+        public ProfileController(
+            UserManager<IdentityUser> userManager,
+            ApplicationDbContext context)
         {
             _userManager = userManager;
+            _context = context;
         }
 
         // View profile
@@ -24,6 +30,11 @@ namespace GiftOfTheGivers.Controllers
             {
                 return RedirectToAction("Index", "Home");
             }
+
+            ViewBag.Donations = await _context.Donations
+                .Where(d => d.UserID == user.Id)
+                .OrderByDescending(d => d.DonationDate)
+                .ToListAsync();
 
             return View(user);
         }

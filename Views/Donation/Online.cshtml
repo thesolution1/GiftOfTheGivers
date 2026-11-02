@@ -97,8 +97,10 @@
                                                class="form-label fw-bold">
                                             Donation Type
                                         </label>
+
                                         <select asp-for="DonationType"
-                                                class="form-select">
+                                                class="form-select"
+                                                id="donationType">
                                             <option value="One-Time">
                                                 One-Time Donation
                                             </option>
@@ -106,9 +108,65 @@
                                                 Recurring Donation
                                             </option>
                                         </select>
+
                                         <span asp-validation-for="DonationType"
                                               class="text-danger">
                                         </span>
+                                    </div>
+
+                                    <!-- Recurring Donation Options -->
+                                    <div id="recurringOptions"
+                                         class="border rounded p-3 mb-4"
+                                         style="display: none;">
+
+                                        <h5 class="fw-bold">
+                                            Recurring Donation Schedule
+                                        </h5>
+
+                                        <div class="mb-3">
+                                            <label asp-for="RecurringMonths"
+                                                   class="form-label">
+                                                How long should the donation recur?
+                                            </label>
+
+                                            <input asp-for="RecurringMonths"
+                                                   type="number"
+                                                   class="form-control"
+                                                   min="3"
+                                                   max="120"
+                                                   placeholder="For example, 3 or 6" />
+
+                                            <div class="form-text">
+                                                Enter a duration between 3 and 120 months.
+                                            </div>
+
+                                            <span asp-validation-for="RecurringMonths"
+                                                  class="text-danger">
+                                            </span>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label asp-for="RecurringDay"
+                                                   class="form-label">
+                                                Which day of the month should payment be made?
+                                            </label>
+
+                                            <input asp-for="RecurringDay"
+                                                   type="number"
+                                                   class="form-control"
+                                                   min="1"
+                                                   max="31"
+                                                   placeholder="For example, 15" />
+
+                                            <div class="form-text">
+                                                Select a day from 1 to 31. Days 29 to 31 may not occur
+                                                in shorter months.
+                                            </div>
+
+                                            <span asp-validation-for="RecurringDay"
+                                                  class="text-danger">
+                                            </span>
+                                        </div>
                                     </div>
                                     <!-- Anonymous -->
                                     <div class="form-check mb-4">
@@ -131,3 +189,29 @@
                 </div>
             </div>
         </section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const donationType = document.getElementById("donationType");
+            const recurringOptions =
+                document.getElementById("recurringOptions");
+
+            function toggleRecurringOptions() {
+                const isRecurring =
+                    donationType.value === "Recurring";
+
+                recurringOptions.style.display =
+                    isRecurring ? "block" : "none";
+            }
+
+            donationType.addEventListener(
+                "change",
+                toggleRecurringOptions);
+
+            toggleRecurringOptions();
+        });
+    </script>
+}

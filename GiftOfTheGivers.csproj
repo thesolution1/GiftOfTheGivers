@@ -45,6 +45,11 @@
   <ItemGroup>
     <Folder Include="Resources\" />
     <None Include=".github\workflows\dotnet.yml" />
+    <None Include="GiftOfTheGivers.Helpers.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="GiftOfTheGivers.Helpers\GiftOfTheGivers.Helpers.csproj" />
     <None Include="GiftOfTheGivers.SeleniumTests\GiftOfTheGivers.SeleniumTests.csproj" />
   </ItemGroup>
 

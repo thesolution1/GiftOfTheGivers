@@ -1,57 +1,88 @@
-﻿@{
+﻿@model GiftOfTheGivers.Models.Donation
+
+@{
     ViewData["Title"] = "Donation Tax Certificate";
 }
 
 <div class="container mt-5">
-
     <div class="card shadow">
+        <div class="card-body">
 
-        <div class="card-body text-center">
+            <div class="text-center">
+                <h1 class="mb-4">
+                    Gift of the Givers
+                </h1>
 
-            <h1 class="mb-4">
-                Donation Tax Certificate
-            </h1>
+                <h2>
+                    Donation Tax Certificate
+                </h2>
+
+                <p class="text-muted">
+                    Disaster Relief and Humanitarian Support
+                </p>
+            </div>
 
             <hr />
 
-            <h4 class="mt-4">
-                Gift of the Givers Disaster Relief System
-            </h4>
+            <div class="row mt-4">
+                <div class="col-sm-6">
+                    <strong>Certificate Number:</strong>
+                    <p>@Model.TaxCertificateNumber</p>
+                </div>
 
-            <p class="mt-4">
-                Thank you for supporting humanitarian and
-                disaster-relief initiatives.
-            </p>
+                <div class="col-sm-6">
+                    <strong>Issue Date:</strong>
+                    <p>
+                        @Model.TaxCertificateIssuedAt?.ToString("dd MMMM yyyy")
+                    </p>
+                </div>
 
-            <div class="alert alert-success mt-4">
+                <div class="col-sm-6">
+                    <strong>Donor:</strong>
+                    <p>@Model.TaxCertificateDonorName</p>
+                </div>
 
-                <strong>Donation Recorded</strong>
+                <div class="col-sm-6">
+                    <strong>Email:</strong>
+                    <p>@Model.TaxCertificateDonorEmail</p>
+                </div>
 
-                <p class="mb-0 mt-2">
-                    Amount:
-                    @TempData["DonationCurrency"]
-                    @TempData["DonationAmount"]
-                </p>
+                <div class="col-sm-6">
+                    <strong>Donation Amount:</strong>
+                    <p>
+                        @Model.Currency @Model.Amount.ToString("N2")
+                    </p>
+                </div>
 
-                <p class="mb-0">
-                    Type:
-                    @TempData["DonationType"]
-                </p>
+                <div class="col-sm-6">
+                    <strong>Donation Type:</strong>
+                    <p>@Model.DonationType</p>
+                </div>
 
+                <div class="col-sm-6">
+                    <strong>Donation Date:</strong>
+                    <p>
+                        @Model.DonationDate.ToString("dd MMMM yyyy")
+                    </p>
+                </div>
+
+                <div class="col-sm-6">
+                    <strong>Reference Number:</strong>
+                    <p>@Model.ReferenceNumber</p>
+                </div>
             </div>
 
-            <p class="text-muted">
-                This is a prototype tax certificate generated
-                for demonstration purposes.
-            </p>
+            <div class="alert alert-success text-center mt-4">
+                Thank you for supporting Gift of the Givers.
+            </div>
 
-            <button onclick="window.print()"
-                    class="btn btn-dark">
-                Download / Print Certificate
-            </button>
+            <div class="text-center mt-4">
+                <button onclick="window.print()"
+                        class="btn btn-dark">
+                    Print / Save Certificate
+                </button>
+            </div>
 
         </div>
-
     </div>
-
 </div>
