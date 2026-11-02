@@ -1,4 +1,4 @@
-name: Build and test
+name: Integration Tests
 
 on:
   push:
@@ -32,4 +32,6 @@ jobs:
         run: dotnet build GiftOfTheGivers.sln --configuration Release --no-restore
 
       - name: Run tests
+        run: dotnet test GiftOfTheGivers.Tests/GiftOfTheGivers.Tests.csproj --configuration Release --verbosity normal
+      - name: Integration Tests
         run: dotnet test GiftOfTheGivers.Tests/GiftOfTheGivers.Tests.csproj --configuration Release --no-build --verbosity normal
