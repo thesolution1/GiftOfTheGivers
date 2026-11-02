@@ -1,98 +1,151 @@
-﻿@model GiftOfTheGivers.Models.Volunteer
+﻿@model GiftOfTheGivers.ViewModels.VolunteerPageViewModel
 
 @{
     ViewData["Title"] = "Volunteer";
-    ViewData["BackgroundImage"] = "/image/background.jpeg";
+    ViewData["BackgroundImage"] = "/image/volunteer.jpeg";
 }
 
-<div class="container mt-4">
+<div class="container py-5">
+    <h1 class="mb-3">Volunteer</h1>
 
-    <div class="text-center mb-4">
-        <h1>Become a Volunteer</h1>
+    @if (TempData["VolunteerMessage"] is string message)
+    {
+        <div class="alert alert-success">@message</div>
+    }
 
-        <p class="lead">
-            Join Gift of the Givers in supporting communities
-            affected by disasters and humanitarian crises.
-        </p>
-    </div>
+    @if (!Model.IsAuthenticated)
+    {
+        <div class="alert alert-info">
+            You must be registered and logged in to view projects or volunteer.
 
-    <div class="card shadow-sm">
-
-        <div class="card-body">
-
-            <h3 class="mb-4">Volunteer Registration</h3>
-
-            <form asp-action="Submit" method="post">
-
-                <div class="mb-3">
-                    <label asp-for="Name" class="form-label">
-                        Full Name
-                    </label>
-
-                    <input asp-for="Name"
-                           class="form-control"
-                           placeholder="Enter your full name" />
-
-                    <span asp-validation-for="Name"
-                          class="text-danger"></span>
-                </div>
-
-                <div class="mb-3">
-                    <label asp-for="Skills" class="form-label">
-                        Skills
-                    </label>
-
-                    <input asp-for="Skills"
-                           class="form-control"
-                           placeholder="e.g. First Aid, Driving, IT" />
-
-                    <span asp-validation-for="Skills"
-                          class="text-danger"></span>
-                </div>
-
-                <div class="mb-4">
-                    <label asp-for="Availability"
-                           class="form-label">
-                        Availability
-                    </label>
-
-                    <select asp-for="Availability"
-                            class="form-select">
-
-                        <option value="">
-                            Select availability
-                        </option>
-
-                        <option value="Weekdays">
-                            Weekdays
-                        </option>
-
-                        <option value="Weekends">
-                            Weekends
-                        </option>
-
-                        <option value="Full-Time">
-                            Full-Time
-                        </option>
-
-                        <option value="Emergency Only">
-                            Emergency Only
-                        </option>
-
-                    </select>
-
-                    <span asp-validation-for="Availability"
-                          class="text-danger"></span>
-                </div>
-
-                <button type="submit"
-                        class="btn btn-dark btn-lg">
-                    Register as Volunteer
-                </button>
-
-            </form>
-
+            <a asp-area="Identity"
+               asp-page="/Account/Login"
+               asp-route-returnUrl="/Volunteer/Index">
+                Log in
+            </a>
+            or
+            <a asp-area="Identity"
+               asp-page="/Account/Register">
+                register
+            </a>.
         </div>
+
+        <p>
+            If you are not registered, you may submit your name and email
+            through the <a asp-controller="Contact" asp-action="Create">contact form</a>.
+        </p>
+
+        return;
+    }
+
+    <div class="alert alert-secondary">
+        <strong>Volunteer name:</strong>
+        <input value="@Model.DonorName"
+               class="form-control mt-2"
+               readonly />
+        <small class="text-muted">
+            This name comes from your account and cannot be changed here.
+        </small>
     </div>
 
+    <h2 class="mt-4">Available Projects</h2>
+
+    @if (!Model.Projects.Any())
+    {
+        <div class="alert alert-info">
+            No projects are currently available.
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var project in Model.Projects)
+            {
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h3 class="card-title">@project.ProjectName</h3>
+
+                            <p>@project.Summary</p>
+
+                            @if (project.IsApproved)
+                            {
+                                <a asp-action="Details"
+                                   asp-route-id="@project.Id"
+                                   class="btn btn-success">
+                                    View full details
+                                </a>
+                            }
+                            else if (project.HasPendingRequest)
+                            {
+                                <span class="badge bg-warning text-dark">
+                                    Approval pending
+                                </span>
+                            }
+                            else
+                            {
+                                <form asp-action="Submit" method="post">
+                                    @Html.AntiForgeryToken()
+
+                                    <input type="hidden"
+                                           name="projectId"
+                                           value="@project.Id" />
+
+                                    <div class="mb-2">
+                                        <label class="form-label">Skills</label>
+                                        <textarea name="Skills"
+                                                  class="form-control"
+                                                  required></textarea>
+                                    </div>
+
+                                    <div class="mb-2">
+                                        <label class="form-label">Availability</label>
+                                        <textarea name="Availability"
+                                                  class="form-control"
+                                                  required></textarea>
+                                    </div>
+
+                                    <button type="submit"
+                                            class="btn btn-warning">
+                                        Request to Volunteer
+                                    </button>
+                                </form>
+
+                                <p class="small text-muted mt-2 mb-0">
+                                    Full project details become available
+                                    after employee approval.
+                                </p>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    <hr class="my-5" />
+
+    <h2>Do not see a suitable project?</h2>
+
+    <form asp-action="RequestUpcomingProject" method="post">
+        @Html.AntiForgeryToken()
+
+        <div class="mb-3">
+            <label class="form-label">Skills</label>
+            <textarea name="Skills"
+                      class="form-control"
+                      required></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Availability</label>
+            <textarea name="Availability"
+                      class="form-control"
+                      required></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-dark">
+            Request to Join Upcoming Projects
+        </button>
+    </form>
 </div>

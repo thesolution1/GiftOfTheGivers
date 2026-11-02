@@ -14,7 +14,8 @@
           asp-append-version="true" />
 </head>
 
-<body class="@ViewData["BodyClass"]" class="page-background" style="background-image: url('@ViewData["BackgroundImage"]');">
+<body class="page-background @(ViewData["BodyClass"] ?? string.Empty)"
+      style="background-image: url('@ViewData["BackgroundImage"]');">
     
   
     <!-- Navigation -->

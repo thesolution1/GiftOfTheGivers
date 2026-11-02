@@ -18,6 +18,11 @@
     <EmbeddedResource Remove="GiftOfTheGivers.Helpers\**" />
     <None Remove="GiftOfTheGivers.Helpers\**" />
 
+    <Compile Remove="GiftOfTheGivers.Tests\**" />
+    <Content Remove="GiftOfTheGivers.Tests\**" />
+    <EmbeddedResource Remove="GiftOfTheGivers.Tests\**" />
+    <None Remove="GiftOfTheGivers.Tests\**" />
+
     <Compile Remove="Views\Donation\Index1.cshtml.cs" />
     <Content Remove="Views\Donation\Index1.cshtml" />
   </ItemGroup>
@@ -37,9 +42,6 @@
 
   <ItemGroup>
     <Folder Include="Resources\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include=".github\workflows\dotnet.yml" />
   </ItemGroup>
 
