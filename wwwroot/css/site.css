@@ -29,15 +29,18 @@ body {
     position: relative;
 }
 
-    .page-background::before {
-        content: "";
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.4);
-        z-index: -1;
-    }
+.page-background::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: -1;
+}
 
-
+.page-background main {
+    position: relative;
+    z-index: 1;
+}
 
 .home-background {
     background-image: url('/image/home.jpeg');
@@ -96,4 +99,25 @@ body {
 
 .dashboard-icon {
     font-size: 3rem;
+}
+
+.volunteer-page {
+    min-height: 100vh;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    position: relative;
+}
+
+.volunteer-page::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: -1;
+}
+
+.volunteer-page .card {
+    background-color: rgba(255, 255, 255, 0.94);
 }

@@ -1,0 +1,27 @@
+﻿@model GiftOfTheGivers.Models.ReliefProject
+
+@{
+    ViewData["Title"] = Model.ProjectName;
+}
+
+<div class="container py-5">
+    <h1>@Model.ProjectName</h1>
+
+    <p class="text-muted">
+        <strong>Location:</strong> @Model.Location
+    </p>
+
+    <hr />
+
+    <p>@Model.Update</p>
+
+    <small class="text-muted">
+        Updated @Model.UpdateDate.ToString("dd MMMM yyyy")
+    </small>
+
+    <div class="mt-4">
+        <a asp-action="Index" class="btn btn-secondary">
+            Back to projects
+        </a>
+    </div>
+</div>

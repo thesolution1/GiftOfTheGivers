@@ -1,8 +1,6 @@
 @model GiftOfTheGivers.Models.ContactRequest
 @using Microsoft.AspNetCore.Authorization
 
-[Authorize(Roles = "Employee")]
-
 <form asp-action="Create" method="post">
     <div asp-validation-summary="ModelOnly"></div>
 
@@ -13,4 +11,5 @@
     <input asp-for="Email" />
 
     <button type="submit">Request Contact</button>
+    [Authorize(Roles = "Employee")]
 </form>
