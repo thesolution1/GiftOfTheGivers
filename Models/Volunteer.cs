@@ -1,22 +1,30 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GiftOfTheGivers.Models
 {
-    public class Volunteer  
+    public class Volunteer
     {
-        public int VolunteerID { get; set; } 
+        [Key]
+        public int VolunteerID { get; set; }
 
         [Required]
-        [Display(Name = "Full Name")]
-        public string Name { get; set; } = string.Empty;
+        public int UserID { get; set; }
+        [ForeignKey("UserID")]
+        public User? User { get; set; }
+
+        // NEW - Link to Project
+        [Required]
+        [Display(Name = "Project")]
+        public int ReliefProjectID { get; set; }
+        [ForeignKey("ReliefProjectID")]
+        public ReliefProject? ReliefProject { get; set; }
 
         [Required]
         public string Skills { get; set; } = string.Empty;
 
         [Required]
-        public string Availability { get; set; } = string.Empty;
-
-       
-
+        [Display(Name = "Availability")]
+        public string AvailabilityStatus { get; set; } = "Standby";
     }
 }

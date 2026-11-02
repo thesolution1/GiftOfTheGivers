@@ -15,13 +15,13 @@
                 <dd class="col-sm-9">@Model.Volunteer.VolunteerID</dd>
 
                 <dt class="col-sm-3">Full Name</dt>
-                <dd class="col-sm-9">@Model.Volunteer.Name</dd>
+                <dd class="col-sm-9">@Model.Volunteer.User.FirstName @Model.Volunteer.User.LastName</dd>
 
                 <dt class="col-sm-3">Skills</dt>
                 <dd class="col-sm-9">@Model.Volunteer.Skills</dd>
 
                 <dt class="col-sm-3">Availability</dt>
-                <dd class="col-sm-9">@Model.Volunteer.Availability</dd>
+                <dd class="col-sm-9">@Model.Volunteer.AvailabilityStatus</dd>
             </dl>
 
             <a asp-page="./Edit" asp-route-id="@Model.Volunteer.VolunteerID" class="btn btn-warning">Edit</a>

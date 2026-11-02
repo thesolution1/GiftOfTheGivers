@@ -1,28 +1,20 @@
-using GiftOfTheGivers;
 using GiftOfTheGivers.Models;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Localization;
 using System.Globalization;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
-
+// Localization
 builder.Services.AddLocalization(options =>
 {
     options.ResourcesPath = "Resources";
 });
 
 builder.Services.AddControllersWithViews();
-
-
-
-
-// Add services to the container.
-builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
+// DB with retry (keep your code)
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection"),
@@ -33,13 +25,17 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
         )
     ));
 
-builder.Services.AddDefaultIdentity<IdentityUser>()
-    .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+// NEW: Add Session for custom login (because we don't use Identity anymore)
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(60);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 
 var app = builder.Build();
 
-// lauguage 
+// Language setup - keep yours
 var supportedCultures = new[]
 {
     new CultureInfo("en"),
@@ -56,30 +52,7 @@ var localizationOptions = new RequestLocalizationOptions
 
 app.UseRequestLocalization(localizationOptions);
 
-// Create DB and Seed 
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    try
-    {
-        var context = services.GetRequiredService<ApplicationDbContext>();
-        
-        context.Database.Migrate();
-
-        var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-        var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
-
-        await IdentitySeeder.SeedRolesAsync(roleManager);
-        await IdentitySeeder.SeedEmployeeAsync(userManager);
-    }
-    catch (Exception ex)
-    {
-        var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "An error occurred seeding the DB.");
-    }
-}
-
-// Configure the HTTP request pipeline.
+// Configure pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -89,7 +62,9 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
-app.UseAuthentication();
+
+app.UseSession(); // MUST be before UseAuthorization
+// app.UseAuthentication(); <- DELETE THIS, you don't use Identity anymore
 app.UseAuthorization();
 
 app.MapControllerRoute(
@@ -97,5 +72,8 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.MapRazorPages();
+
+// REMOVED: The whole block that did context.Database.Migrate() and SeedRoles - it will crash with your new tables.
+// If you need seed data, we will create a new custom seeder later.
 
 app.Run();

@@ -1,82 +1,57 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
+﻿using GiftOfTheGivers.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace GiftOfTheGivers.Controllers
 {
-    [Authorize]
     public class ProfileController : Controller
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly ApplicationDbContext _context;
+        public ProfileController(ApplicationDbContext context) { _context = context; }
 
-        public ProfileController(UserManager<IdentityUser> userManager)
-        {
-            _userManager = userManager;
-        }
-
-        // View profile
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var user = await _userManager.GetUserAsync(User);
+            var userId = HttpContext.Session.GetInt32("UserID");
+            if (userId == null) return RedirectToAction("Login", "Account");
 
-            if (user == null)
-            {
-                return RedirectToAction("Index", "Home");
-            }
-
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserID == userId.Value);
             return View(user);
         }
 
-        // Edit profile
         [HttpGet]
         public async Task<IActionResult> Edit()
         {
-            var user = await _userManager.GetUserAsync(User);
+            var userId = HttpContext.Session.GetInt32("UserID");
+            if (userId == null) return RedirectToAction("Login", "Account");
 
-            if (user == null)
-            {
-                return RedirectToAction("Index", "Home");
-            }
-
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserID == userId.Value);
             return View(user);
         }
 
-        // Save profile changes
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(IdentityUser model)
+        public async Task<IActionResult> Edit(User model)
         {
-            var user = await _userManager.GetUserAsync(User);
+            var userId = HttpContext.Session.GetInt32("UserID");
+            if (userId == null) return RedirectToAction("Login", "Account");
 
-            if (user == null)
-            {
-                return RedirectToAction("Index", "Home");
-            }
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserID == userId.Value);
+            if (user == null) return RedirectToAction("Index", "Home");
 
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
+            if (!ModelState.IsValid) return View(model);
 
+            user.FirstName = model.FirstName;
+            user.LastName = model.LastName;
             user.Email = model.Email;
-            user.UserName = model.Email;
-            user.PhoneNumber = model.PhoneNumber;
 
-            var result = await _userManager.UpdateAsync(user);
+            await _context.SaveChangesAsync();
 
-            if (result.Succeeded)
-            {
-                TempData["SuccessMessage"] = "Your profile has been updated successfully.";
-                return RedirectToAction(nameof(Index));
-            }
+            HttpContext.Session.SetString("Email", user.Email);
+            HttpContext.Session.SetString("FullName", user.FirstName + " " + user.LastName);
 
-            foreach (var error in result.Errors)
-            {
-                ModelState.AddModelError("", error.Description);
-            }
-
-            return View(model);
+            TempData["SuccessMessage"] = "Your profile updated successfully.";
+            return RedirectToAction(nameof(Index));
         }
     }
 }

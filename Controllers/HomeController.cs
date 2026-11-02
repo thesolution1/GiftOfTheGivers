@@ -1,7 +1,5 @@
 using System.Diagnostics;
 using GiftOfTheGivers.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,180 +9,94 @@ namespace GiftOfTheGivers.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly ApplicationDbContext _context;
-        private readonly UserManager<IdentityUser> _userManager;
 
-        public HomeController(
-            ILogger<HomeController> logger,
-            ApplicationDbContext context,
-            UserManager<IdentityUser> userManager)
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context)
         {
             _logger = logger;
             _context = context;
-            _userManager = userManager;
         }
 
-        public IActionResult Online()
-        {
-            return View();
-        }
+        public IActionResult Online() => View();
 
-        // Home / Employee Dashboard
         public async Task<IActionResult> Index()
         {
-            // Only load statistics for Employees
-            if (User.IsInRole("Employee"))
+            // Check Employee via Session, not Identity
+            if (HttpContext.Session.GetString("Role") == "Employee")
             {
-                // Total Volunteers
-                ViewBag.TotalVolunteers =
-                    await _context.Volunteers.CountAsync();
-
-                // Total Relief Projects
-                ViewBag.TotalReliefProjects =
-                    await _context.ReliefProjects.CountAsync();
-
-                // Total Donations
-                ViewBag.TotalDonations =
-                    await _context.Donations.CountAsync();
-
-                // Total ZAR Donations
-                ViewBag.TotalZarDonations =
-                    await _context.Donations
-                        .Where(d => d.Currency == "ZAR")
-                        .SumAsync(d => d.Amount);
+                ViewBag.TotalVolunteers = await _context.Volunteers.CountAsync();
+                ViewBag.TotalReliefProjects = await _context.ReliefProjects.CountAsync();
+                ViewBag.TotalDonations = await _context.Donations.CountAsync();
+                ViewBag.TotalZarDonations = await _context.Donations
+                    .Where(d => d.Currency == "ZAR")
+                    .SumAsync(d => d.Amount);
             }
-
             return View();
         }
 
-        public IActionResult About()
-        {
-            return View();
-        }
+        public IActionResult About() => View();
 
-        // GET: Donation page
         [HttpGet]
-        [Authorize]
         public IActionResult Donate()
         {
+            if (HttpContext.Session.GetInt32("UserID") == null)
+                return RedirectToAction("Login", "Account");
             return View();
         }
 
-        // POST: Save donation
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize]
         public async Task<IActionResult> Donate(Donation donation)
         {
-            if (!ModelState.IsValid)
-            {
-                return View(donation);
-            }
+            var userId = HttpContext.Session.GetInt32("UserID");
+            if (userId == null) return RedirectToAction("Login", "Account");
 
-            var user = await _userManager.GetUserAsync(User);
+            if (!ModelState.IsValid) return View(donation);
 
-            if (user == null)
-            {
-                return Challenge();
-            }
-
-            // Connect donation to logged-in user
-            donation.UserID = user.Id;
-
-            // Save date
+            donation.UserID = userId.Value;
             donation.DonationDate = DateTime.Now;
+            donation.ReferenceNumber = "DON-" + Guid.NewGuid().ToString("N")[..8].ToUpper();
 
-            // Generate unique reference number
-            donation.ReferenceNumber =
-                "DON-" + Guid.NewGuid().ToString("N")[..8].ToUpper();
-
-            // Save donation
             _context.Donations.Add(donation);
-
             await _context.SaveChangesAsync();
 
-            // Immediately open the tax certificate
-            return RedirectToAction(
-                "TaxCertificate",
-                new { id = donation.DonationID });
+            return RedirectToAction("TaxCertificate", new { id = donation.DonationID });
         }
 
-        // GET: Volunteer page
-        [HttpGet]
-        public IActionResult Volunteer()
-        {
-            return View();
-        }
+        [HttpGet] public IActionResult Volunteer() => View();
 
-        // POST: Register volunteer
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Volunteer(Volunteer volunteer)
         {
-            if (!ModelState.IsValid)
-            {
-                return View(volunteer);
-            }
+            var userId = HttpContext.Session.GetInt32("UserID");
+            if (userId == null) return RedirectToAction("Login", "Account");
+
+            volunteer.UserID = userId.Value; // Link to logged in user
+            if (!ModelState.IsValid) return View(volunteer);
 
             _context.Volunteers.Add(volunteer);
-
             await _context.SaveChangesAsync();
 
-            TempData["VolunteerSuccess"] =
-                "Thank you for registering your interest as a volunteer.";
-
+            TempData["VolunteerSuccess"] = "Thank you for registering as a volunteer.";
             return RedirectToAction(nameof(Volunteer));
         }
 
-        // Display tax certificate for the donation just made
         [HttpGet]
-        [Authorize]
         public async Task<IActionResult> TaxCertificate(int id)
         {
-            var user = await _userManager.GetUserAsync(User);
+            var userId = HttpContext.Session.GetInt32("UserID");
+            if (userId == null) return RedirectToAction("Login", "Account");
 
-            if (user == null)
-            {
-                return Challenge();
-            }
+            var donation = await _context.Donations.FirstOrDefaultAsync(d => d.DonationID == id && d.UserID == userId.Value);
+            if (donation == null) return NotFound();
 
-            var donation = await _context.Donations
-                .FirstOrDefaultAsync(d =>
-                    d.DonationID == id &&
-                    d.UserID == user.Id);
-
-            if (donation == null)
-            {
-                return NotFound();
-            }
-
-            ViewBag.DonorEmail = user.Email;
-            ViewBag.DonorName = user.UserName;
-
+            ViewBag.DonorEmail = HttpContext.Session.GetString("Email");
+            ViewBag.DonorName = HttpContext.Session.GetString("FullName");
             return View(donation);
         }
 
-        public IActionResult Contact()
-        {
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(
-            Duration = 0,
-            Location = ResponseCacheLocation.None,
-            NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(
-                new ErrorViewModel
-                {
-                    RequestId = Activity.Current?.Id
-                               ?? HttpContext.TraceIdentifier
-                });
-        }
+        public IActionResult Contact() => View();
+        public IActionResult Privacy() => View();
+        public IActionResult Error() => View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 }

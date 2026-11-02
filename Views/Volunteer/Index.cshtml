@@ -6,111 +6,46 @@
 }
 
 <div class="container mt-4">
-
     <div class="text-center mb-4">
         <h1>Become a Volunteer</h1>
-
-        <p class="lead">
-            Join Gift of the Givers in supporting communities
-            affected by disasters and humanitarian crises.
-        </p>
+        <p class="lead">Join Gift of the Givers in supporting communities.</p>
     </div>
 
     <div class="card shadow-sm">
-
         <div class="card-body">
-
             <h3 class="mb-4">Volunteer Registration</h3>
 
             <form asp-action="Submit" method="post">
 
                 <div class="mb-3">
-                    <label asp-for="Name" class="form-label">
-                        Full Name
-                    </label>
-
-                    <input asp-for="Name"
-                           class="form-control"
-                           placeholder="Enter your full name" />
-
-                    <span asp-validation-for="Name"
-                          class="text-danger"></span>
-                </div>
-
-                <div class="mb-3">
-                    <label asp-for="ProjectName" class="form-label">
-                        Select Project To Volunter For
-                    </label>
-
-                    <select asp-for="ProjectName"
-                            class="form-select">
-
-                        <option value="">
-                            Select availability
-                        </option>
-
+                    <label asp-for="ReliefProjectID" class="form-label">Select Project To Volunteer For</label>
+                    <select asp-for="ReliefProjectID" class="form-select" asp-items="ViewBag.Projects">
+                        <option value="">-- Select a Project --</option>
                     </select>
-
-                    <span asp-validation-for="SelectProject"
-                          class="text-danger"></span>
+                    <span asp-validation-for="ReliefProjectID" class="text-danger"></span>
                 </div>
 
                 <div class="mb-3">
-                    <label asp-for="Skills" class="form-label">
-                        Skills
-                    </label>
-
-                    <input asp-for="Skills"
-                           class="form-control"
-                           placeholder="e.g First Aid, Driving, IT, Rescue" />
-
-                    <span asp-validation-for="Skills"
-                          class="text-danger"></span>
+                    <label asp-for="Skills" class="form-label">Skills</label>
+                    <input asp-for="Skills" class="form-control" placeholder="e.g First Aid, Driving, IT" />
+                    <span asp-validation-for="Skills" class="text-danger"></span>
                 </div>
 
                 <div class="mb-4">
-                    <label asp-for="Availability"
-                           class="form-label">
-                        Availability
-                    </label>
-
-                    <select asp-for="Availability"
-                            class="form-select">
-
-                        <option value="">
-                            Select availability
-                        </option>
-
-                        <option value="Weekdays">
-                            Weekdays
-                        </option>
-
-                        <option value="Weekends">
-                            Weekends
-                        </option>
-
-                        <option value="Full-Time">
-                            Full-Time
-                        </option>
-
-                        <option value="Emergency Only">
-                            Emergency Only
-                        </option>
-
+                    <label asp-for="AvailabilityStatus" class="form-label">Availability</label>
+                    <select asp-for="AvailabilityStatus" class="form-select">
+                        <option value="">Select availability</option>
+                        <option value="Weekdays">Weekdays</option>
+                        <option value="Weekends">Weekends</option>
+                        <option value="Full-Time">Full-Time</option>
+                        <option value="Emergency Only">Emergency Only</option>
+                        <option value="Standby">Standby</option>
                     </select>
-
-                    <span asp-validation-for="Availability"
-                          class="text-danger"></span>
+                    <span asp-validation-for="AvailabilityStatus" class="text-danger"></span>
                 </div>
 
-                <button type="submit"
-                        class="btn btn-dark btn-lg">
-                    Register as Volunteer
-                </button>
-
+                <button type="submit" class="btn btn-dark btn-lg">Register as Volunteer</button>
             </form>
-
         </div>
     </div>
-
 </div>

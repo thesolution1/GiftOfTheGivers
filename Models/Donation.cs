@@ -5,11 +5,12 @@ namespace GiftOfTheGivers.Models
 {
     public class Donation
     {
+        [Key]
         public int DonationID { get; set; }
 
         [Required]
-        [Range(1, 100000000)] 
-        [Column(TypeName = "decimal(18,2)")]
+        [Range(1, 100000000)]
+        [Column(TypeName = "decimal(10,2)")] // Changed from 18,2 to 10,2 to match your SQL
         public decimal Amount { get; set; }
 
         [Required]
@@ -22,10 +23,13 @@ namespace GiftOfTheGivers.Models
 
         public bool IsAnonymous { get; set; }
 
-        // Stores the Identity User who made the donation
-        public string? UserID { get; set; }
+        // OLD: public string? UserID - NEW: int to match your Users table
+        [Required]
+        public int UserID { get; set; }
+        [ForeignKey("UserID")]
+        public User? User { get; set; }
 
-        // Unique donation reference number
+        // Keep your old field
         public string? ReferenceNumber { get; set; }
     }
 }

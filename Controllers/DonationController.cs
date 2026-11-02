@@ -1,11 +1,9 @@
 ﻿using GiftOfTheGivers.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace GiftOfTheGivers.Controllers
 {
-    [Authorize]
     public class DonationController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -15,7 +13,6 @@ namespace GiftOfTheGivers.Controllers
             _context = context;
         }
 
-        // Donation page
         [HttpGet]
         public IActionResult Online()
         {
@@ -24,6 +21,11 @@ namespace GiftOfTheGivers.Controllers
 
         public IActionResult Index()
         {
+            // Check if user is logged in via Session
+            if (HttpContext.Session.GetInt32("UserID") == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
             return View();
         }
 
@@ -32,57 +34,50 @@ namespace GiftOfTheGivers.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Submit(Donation donation)
         {
+            var userId = HttpContext.Session.GetInt32("UserID");
+            if (userId == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
             if (!ModelState.IsValid)
             {
                 return View("Index", donation);
             }
 
+            donation.UserID = userId.Value; // int, not string
             donation.DonationDate = DateTime.Now;
+            donation.ReferenceNumber = "DON-" + Guid.NewGuid().ToString("N")[..8].ToUpper();
 
-            // Generate a reference number for the donation
-            donation.ReferenceNumber =
-                "DON-" + Guid.NewGuid().ToString("N")[..8].ToUpper();
-
-            // Save the donation
             _context.Donations.Add(donation);
-
             await _context.SaveChangesAsync();
 
-            // Immediately show the certificate for THIS donation
-            return RedirectToAction(
-                nameof(Certificate),
-                new { id = donation.DonationID });
+            return RedirectToAction(nameof(Certificate), new { id = donation.DonationID });
         }
 
-        // Display the tax certificate for a specific donation
         [HttpGet]
         public async Task<IActionResult> Certificate(int id)
         {
             var donation = await _context.Donations
+                .Include(d => d.User)
                 .FirstOrDefaultAsync(d => d.DonationID == id);
 
-            if (donation == null)
-            {
-                return NotFound();
-            }
+            if (donation == null) return NotFound();
 
             return View(donation);
         }
 
-        // Display all donations made by the logged-in user
         [HttpGet]
         public async Task<IActionResult> MyDonations()
         {
-            var userId = User.FindFirst(
-                System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
-            if (string.IsNullOrEmpty(userId))
+            var userId = HttpContext.Session.GetInt32("UserID");
+            if (userId == null)
             {
-                return Unauthorized();
+                return RedirectToAction("Login", "Account");
             }
 
             var donations = await _context.Donations
-                .Where(d => d.UserID == userId)
+                .Where(d => d.UserID == userId.Value) // Now int == int
                 .OrderByDescending(d => d.DonationDate)
                 .ToListAsync();
 
