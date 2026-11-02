@@ -37,4 +37,4 @@ public class UpcomingProjectSubmissionViewModel
 
     [Required, StringLength(1000)]
     public string Availability { get; set; } = string.Empty;
-}
+}   
