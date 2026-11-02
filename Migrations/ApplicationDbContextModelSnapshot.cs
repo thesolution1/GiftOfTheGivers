@@ -85,6 +85,19 @@ namespace GiftOfTheGivers.Migrations
                     b.Property<string>("ReferenceNumber")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("TaxCertificateDonorEmail")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TaxCertificateDonorName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("TaxCertificateIssuedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("TaxCertificateNumber")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.Property<string>("UserID")
                         .HasColumnType("nvarchar(max)");
 

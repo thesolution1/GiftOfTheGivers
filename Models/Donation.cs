@@ -32,6 +32,15 @@ namespace GiftOfTheGivers.Models
 
         public string? ReferenceNumber { get; set; }
 
+        [MaxLength(50)]
+        public string? TaxCertificateNumber { get; set; }
+
+        public DateTime? TaxCertificateIssuedAt { get; set; }
+
+        public string? TaxCertificateDonorName { get; set; }
+
+        public string? TaxCertificateDonorEmail { get; set; }
+
         public IEnumerable<ValidationResult> Validate(
             ValidationContext validationContext)
         {
