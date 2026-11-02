@@ -22,6 +22,35 @@ namespace GiftOfTheGivers.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("GiftOfTheGivers.Models.ContactRequest", b =>
+                {
+                    b.Property<int>("ContactRequestId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ContactRequestId"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<bool>("IsContacted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.HasKey("ContactRequestId");
+
+                    b.ToTable("ContactRequests");
+                });
+
             modelBuilder.Entity("GiftOfTheGivers.Models.Donation", b =>
                 {
                     b.Property<int>("DonationID")
@@ -46,6 +75,12 @@ namespace GiftOfTheGivers.Migrations
 
                     b.Property<bool>("IsAnonymous")
                         .HasColumnType("bit");
+
+                    b.Property<int?>("RecurringDay")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("RecurringMonths")
+                        .HasColumnType("int");
 
                     b.Property<string>("ReferenceNumber")
                         .HasColumnType("nvarchar(max)");
@@ -86,6 +121,39 @@ namespace GiftOfTheGivers.Migrations
                     b.ToTable("ReliefProjects");
                 });
 
+            modelBuilder.Entity("GiftOfTheGivers.Models.UpcomingProjectRequest", b =>
+                {
+                    b.Property<int>("UpcomingProjectRequestId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UpcomingProjectRequestId"));
+
+                    b.Property<string>("Availability")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<bool>("IsProcessed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Skills")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<DateTime>("SubmittedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("UpcomingProjectRequestId");
+
+                    b.ToTable("UpcomingProjectRequests");
+                });
+
             modelBuilder.Entity("GiftOfTheGivers.Models.Volunteer", b =>
                 {
                     b.Property<int>("VolunteerID")
@@ -109,6 +177,51 @@ namespace GiftOfTheGivers.Migrations
                     b.HasKey("VolunteerID");
 
                     b.ToTable("Volunteers");
+                });
+
+            modelBuilder.Entity("GiftOfTheGivers.Models.VolunteerRequest", b =>
+                {
+                    b.Property<int>("VolunteerRequestId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("VolunteerRequestId"));
+
+                    b.Property<string>("Availability")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ReliefProjectId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Skills")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("SubmittedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("VolunteerRequestId");
+
+                    b.HasIndex("ReliefProjectId");
+
+                    b.HasIndex("UserId", "ReliefProjectId")
+                        .IsUnique();
+
+                    b.ToTable("VolunteerRequests");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -311,6 +424,17 @@ namespace GiftOfTheGivers.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("GiftOfTheGivers.Models.VolunteerRequest", b =>
+                {
+                    b.HasOne("GiftOfTheGivers.Models.ReliefProject", "ReliefProject")
+                        .WithMany()
+                        .HasForeignKey("ReliefProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ReliefProject");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
